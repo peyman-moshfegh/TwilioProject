@@ -1,0 +1,26 @@
+<%- include partials/header.ejs %>
+
+<%- include partials/main_nav.ejs %>
+
+
+<script src="https://sdk.twilio.com/js/video/releases/2.18.3/twilio-video.min.js"></script>
+
+
+  <!-- Main Content -->
+  <main class="container">
+
+
+    <form id="room-name-form">
+      Enter a Room Name to join: <input name="room_name" id="room-name-input" />
+      <button type="submit">Join Room</button>
+    </form>
+    <div id="video-container"></div>
+
+
+  </main>
+
+
+<script src="/scripts/twilio.js"></script>
+
+
+<%- include partials/footer.ejs %>

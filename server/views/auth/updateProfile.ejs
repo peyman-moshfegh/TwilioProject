@@ -1,0 +1,53 @@
+<%- include ../partials/header.ejs %>
+
+<%- include ../partials/main_nav.ejs %>
+
+<main class="container">
+    <!-- Message Area -->
+    <% if (messages.length >0) {%>
+    <div class="alert alert-danger">
+        <%= messages %>
+    </div>
+    <% } %>
+
+    <div class="row">
+        <div class="offset-md-4 col-md-4">
+            <h1>Update Profile</h1>
+            <form method="POST" autocomplete="off">
+                <fieldset class="form-group">
+                    <label for="username">New Username: </label>
+                    <input type="text" class="form-control" name="username" placeholder="Enter new username" id="username"
+                       value="<%= user.username %>" required autofocus>
+                </fieldset>
+
+                <fieldset class="form-group">
+                    <label for="password">New Password: </label>
+                    <input type="password" class="form-control" name="password" placeholder="Enter new password" id="password"
+                        required>
+                </fieldset>
+                
+                <fieldset class="form-group">
+                    <label for="email">New Email: </label>
+                    <input type="text" class="form-control" name="email" placeholder="Enter new email address" id="email"
+                       value="<%= user.email %>" required>
+                </fieldset>
+
+                <fieldset class="form-group">
+                    <label for="displayName">New Display Name: </label>
+                    <input type="text" class="form-control" name="displayName" placeholder="Enter new display name" id="displayName"
+                       value="<%= user.displayName %>" required>
+                </fieldset>
+
+                <fieldset class="form-group text-right">
+                    <input type="submit" class="btn btn-success" value="Update">
+                    <a href="/">
+                        <input type="button" class="btn btn-warning" value="Cancel">
+                    </a>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+</main>
+
+<%- include ../partials/footer.ejs %>
