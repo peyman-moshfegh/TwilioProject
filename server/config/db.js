@@ -1,6 +1,5 @@
 module.exports =
 {
     //"URI" : "mongodb://localhost/survey"
-    "URI": "mongodb+srv://PeterM:ZFlONmNLgPv7knEb@mongodbserver.yil0d.mongodb.net/contacts?retryWrites=true&w=majority"
-    
+    "URI": "mongodb+srv://admin:Pp6ClaVQtQrsgj5P@dbserver.fnmx3.mongodb.net/DBServer?retryWrites=true&w=majority"   
 }

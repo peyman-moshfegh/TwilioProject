@@ -78,13 +78,71 @@ const handleDisconnectedParticipant = (participant) => {
   participantDiv.remove();
 };
 
+const printNetworkQualityStats = (networkQualityLevel, networkQualityStats) => {
+  // Print in console the networkQualityLevel using bars
+  console.log(
+    {
+      1: "▃",
+      2: "▃▄",
+      3: "▃▄▅",
+      4: "▃▄▅▆",
+      5: "▃▄▅▆▇",
+    }[networkQualityLevel] || ""
+  );
+
+  if (networkQualityStats) {
+    // Print in console the networkQualityStats, which is non-null only if Network Quality
+    // verbosity is 2 (moderate) or greater
+    console.log("Network Quality statistics:", networkQualityStats);
+  }
+};
+
 const joinVideoRoom = async (roomName, token) => {
   // join the video room with the Access Token and the given room name
   const room = await Twilio.Video.connect(token, {
     room: roomName,
     //video: false,
+    audio: { name: "microphone" },
+    video: { name: "camera" },
+
+    //audio: true,
+    //video: { name: "camera", height: 360, frameRate: 4, width: 640 },
+
+    //preferredAudioCodecs: ["Opus"],
+
+    //maxAudioBitrate: 100,
+    //maxVideoBitrate: 10000,
+
+    networkQuality: {
+      local: 3, // LocalParticipant's Network Quality verbosity [1 - 3]
+      remote: 3, // RemoteParticipants' Network Quality verbosity [0 - 3]
+    },
   });
+
+  console.log(room);
+
+  // Print the initial Network Quality Level and statistics
+  printNetworkQualityStats(
+    room.localParticipant.networkQualityLevel,
+    room.localParticipant.networkQualityStats
+  );
+
+  // Print changes to Network Quality Level and statistics
+  room.localParticipant.on(
+    "networkQualityLevelChanged",
+    printNetworkQualityStats
+  );
+
   return room;
 };
+
+// const joinVideoRoom = async (roomName, token) => {
+//   // join the video room with the Access Token and the given room name
+//   const room = await Twilio.Video.connect(token, {
+//     room: roomName,
+//     //video: false,
+//   });
+//   return room;
+// };
 
 form.addEventListener("submit", startRoom);
