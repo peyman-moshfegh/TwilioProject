@@ -1,10 +1,10 @@
-let express = require('express');
+let express = require("express");
 let router = express.Router();
-let mongoose = require('mongoose');
-let passport = require('passport');
+let mongoose = require("mongoose");
+let passport = require("passport");
 
 //create user model instance
-let userModel = require('../models/user');
+let userModel = require("../models/user");
 let User = userModel.User; // alias
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,8 @@ const findOrCreateRoom = async (roomName) => {
   try {
     // see if the room exists already. If it doesn't, this will throw
     // error 20404.
-    await twilioClient.video.rooms(roomName).fetch();
+    const room = await twilioClient.video.rooms(roomName).fetch();
+    console.log(room);
   } catch (error) {
     // the room was not found, so create it
     if (error.code == 20404) {
@@ -60,10 +61,12 @@ const getAccessToken = (roomName) => {
   return token.toJwt();
 };
 
-
 module.exports.displayHomePage = (req, res, next) => {
-    res.render('index', {title: 'Home', displayName: req.user ? req.user.displayName : ''});
-}
+  res.render("index", {
+    title: "Home",
+    displayName: req.user ? req.user.displayName : "",
+  });
+};
 
 module.exports.processHomePage = async (req, res, next) => {
   // return 400 if the request has an empty body or no roomName
@@ -79,159 +82,159 @@ module.exports.processHomePage = async (req, res, next) => {
     token: token,
   });
 
-    //res.render('index', {title: 'Home', displayName: req.user ? req.user.displayName : ''});
-}
+  //res.render('index', {title: 'Home', displayName: req.user ? req.user.displayName : ''});
+};
 
 /////////////////////////////////////////////////////////////////////////////////////
 
 module.exports.displayLoginPage = (req, res, next) => {
-    // check if user is not already loged in
-    if (!req.user) {
-        res.render('auth/login', {
-            title: "Login",
-            messages: req.flash('loginMessage'),
-            displayName: req.user ? req.user.displayName : ''
-        })
-    }
-    else {
-        res.redirect('/');
-    }
-}
+  // check if user is not already loged in
+  if (!req.user) {
+    res.render("auth/login", {
+      title: "Login",
+      messages: req.flash("loginMessage"),
+      displayName: req.user ? req.user.displayName : "",
+    });
+  } else {
+    res.redirect("/");
+  }
+};
 
 module.exports.processLoginPage = (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
-        //if server err?
-        if (err) {
-            return next(err);
-        }
+  passport.authenticate("local", (err, user, info) => {
+    //if server err?
+    if (err) {
+      return next(err);
+    }
 
-        //is there a user login error?
-        if (!user) {
-            req.flash('loginMessage', 'Authentication Error');
-            return res.redirect('/login');
-        } 
+    //is there a user login error?
+    if (!user) {
+      req.flash("loginMessage", "Authentication Error");
+      return res.redirect("/login");
+    }
 
-        req.login(user, (err) => {
-            // server error?
-            if(err) {
-                return next(err);
-            }
-            return res.redirect('/');
-        });
-        
-    })(req, res, next);
-}
+    req.login(user, (err) => {
+      // server error?
+      if (err) {
+        return next(err);
+      }
+      return res.redirect("/");
+    });
+  })(req, res, next);
+};
 
 module.exports.displayRegisterPage = (req, res, next) => {
-    // check if user is not already loged in
-    if (!req.user) {
-        res.render('auth/register', {
-            title: "Register",
-            messages: req.flash('registerMessage'),
-            displayName: req.user ? req.user.displayName : ''
-        });
-    }
-    else {
-        res.redirect('/');
-    }
-}
+  // check if user is not already loged in
+  if (!req.user) {
+    res.render("auth/register", {
+      title: "Register",
+      messages: req.flash("registerMessage"),
+      displayName: req.user ? req.user.displayName : "",
+    });
+  } else {
+    res.redirect("/");
+  }
+};
 
 module.exports.processRegisterPage = (req, res, next) => {
-    // instantiate a user object
-    let newUser = new User({
-        username: req.body.username,
-        //password: req.body.password
-        email: req.body.email,
-        displayName: req.body.displayName
-    })
+  // instantiate a user object
+  let newUser = new User({
+    username: req.body.username,
+    //password: req.body.password
+    email: req.body.email,
+    displayName: req.body.displayName,
+  });
 
-    User.register(newUser, req.body.password, (err) => {
-        if(err) {
-            console.log("Error: Inserting new user");
-            if(err.name == "UserExistsError") {
-                req.flash('registerMessage', 'Registration Error: User Already Exists!');
-                console.log('Error: User Already Exists!')
-            }
-            return res.render('auth/register', {
-                title: "Register",
-                messages: req.flash('registerMessage'),
-                displayName: req.user ? req.user.displayName : ''
-            });
-        } else {
-            // if no error exists, then  registration is successful
+  User.register(newUser, req.body.password, (err) => {
+    if (err) {
+      console.log("Error: Inserting new user");
+      if (err.name == "UserExistsError") {
+        req.flash(
+          "registerMessage",
+          "Registration Error: User Already Exists!"
+        );
+        console.log("Error: User Already Exists!");
+      }
+      return res.render("auth/register", {
+        title: "Register",
+        messages: req.flash("registerMessage"),
+        displayName: req.user ? req.user.displayName : "",
+      });
+    } else {
+      // if no error exists, then  registration is successful
 
-            // redirect the user and authenticate
+      // redirect the user and authenticate
 
-            return passport.authenticate('local')(req, res, () => {
-                res.redirect('/');
-            })
-        }
-
-    })
-}
+      return passport.authenticate("local")(req, res, () => {
+        res.redirect("/");
+      });
+    }
+  });
+};
 
 module.exports.performLogout = (req, res, next) => {
-    req.logout();
-    res.redirect('/');
-}
-
+  req.logout();
+  res.redirect("/");
+};
 
 module.exports.displayUpdateProfilePage = (req, res, next) => {
-    // check if user is not already logged in
-    if (!req.user) {
-        res.render('auth/register', {
-            title: "Register",
-            messages: req.flash('registerMessage'),
-            displayName: req.user ? req.user.displayName : ''
-        });
-    }
-    else {
-        res.render('auth/updateProfile', {
-            title: "Update Your Profile",
-            messages: req.flash('updateMessage'),
-            displayName: req.user ? req.user.displayName : '',
-            user: req.user});
-    }
-}
+  // check if user is not already logged in
+  if (!req.user) {
+    res.render("auth/register", {
+      title: "Register",
+      messages: req.flash("registerMessage"),
+      displayName: req.user ? req.user.displayName : "",
+    });
+  } else {
+    res.render("auth/updateProfile", {
+      title: "Update Your Profile",
+      messages: req.flash("updateMessage"),
+      displayName: req.user ? req.user.displayName : "",
+      user: req.user,
+    });
+  }
+};
 
 module.exports.processUpdateProfilePage = (req, res, next) => {
-    let userId = req.user._id
+  let userId = req.user._id;
 
-    User.remove({_id: userId}, (err) => {
+  User.remove({ _id: userId }, (err) => {
+    if (err) {
+      console.log(err);
+      res.end(err);
+    } else {
+      let updatedUser = User({
+        _id: userId,
+        username: req.body.username,
+        email: req.body.email,
+        displayName: req.body.displayName,
+      });
+
+      User.register(updatedUser, req.body.password, (err) => {
         if (err) {
-            console.log(err);
-            res.end(err);    
+          console.log("Error: Inserting new user");
+          if (err.name == "UserExistsError") {
+            req.flash(
+              "registerMessage",
+              "Registration Error: User Already Exists!"
+            );
+            console.log("Error: User Already Exists!");
+          }
+          return res.render("auth/register", {
+            title: "Register",
+            messages: req.flash("registerMessage"),
+            displayName: req.user ? req.user.displayName : "",
+          });
         } else {
-            let updatedUser = User({
-                "_id": userId,
-                "username": req.body.username,
-                "email": req.body.email,
-                "displayName": req.body.displayName
-            })
+          // if no error exists, then  registration is successful
 
-            User.register(updatedUser, req.body.password, (err) => {
-                if(err) {
-                    console.log("Error: Inserting new user");
-                    if(err.name == "UserExistsError") {
-                        req.flash('registerMessage', 'Registration Error: User Already Exists!');
-                        console.log('Error: User Already Exists!')
-                    }
-                    return res.render('auth/register', {
-                        title: "Register",
-                        messages: req.flash('registerMessage'),
-                        displayName: req.user ? req.user.displayName : ''
-                    });
-                } else {
-                    // if no error exists, then  registration is successful
-        
-                    // redirect the user and authenticate
-        
-                    return passport.authenticate('local')(req, res, () => {
-                        res.redirect('/');
-                    })
-                }
-        
-            })
+          // redirect the user and authenticate
+
+          return passport.authenticate("local")(req, res, () => {
+            res.redirect("/");
+          });
         }
-    })
-}
+      });
+    }
+  });
+};
