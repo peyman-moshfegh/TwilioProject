@@ -26,14 +26,17 @@ const findOrCreateRoom = async (roomName) => {
     // see if the room exists already. If it doesn't, this will throw
     // error 20404.
     const room = await twilioClient.video.rooms(roomName).fetch();
+    console.log("already existing room:");
     console.log(room);
   } catch (error) {
     // the room was not found, so create it
     if (error.code == 20404) {
-      await twilioClient.video.rooms.create({
+      const room = await twilioClient.video.rooms.create({
         uniqueName: roomName,
         type: "group",
       });
+      console.log("newly created room:");
+      console.log(room);
     } else {
       // let other errors bubble up
       throw error;
