@@ -23,15 +23,31 @@ var server = http.createServer(app);
 
 const WebSocket = require("ws");
 
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ port: 4910 });
 
+const wsConnections = new Map();
+let i = 0
 wss.on("connection", (ws) => {
   console.log("New client");
 
+  setInterval(() => {
+    ws.send(`testing ${i++}`)
+  }, 3000);
+
   ws.on("message", (data) => {
-    console.log(data);
-    // console.log(`wsSend.readyState: ${wsSend.readyState}`);
-    // ws.send(data);
+    const message = data.toString();
+    console.log(message);
+
+    // if (message.includes("identt")) {
+    //   ws.identt = message.replace("identt", "");
+    // } else {
+    //   wss.clients.forEach((client) => client.send(data));
+    //   // console.log(`wsSend.readyState: ${wsSend.readyState}`);
+    //   // ws.send(data);
+    // }
+    // wss.clients.forEach((client) =>
+    //   console.log(`client.identt: ${client.identt}`)
+    // );
   });
 
   ws.on("close", () => {

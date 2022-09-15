@@ -1,3 +1,14 @@
+const ws = new WebSocket(location.origin.replace("http", "ws"));
+
+// ws.onopen = () => {
+//   ws.send("hello");
+// };
+
+ws.onmessage = async (event) => {
+  const message = await event.data.text();
+  console.log(message);
+};
+
 const form = document.getElementById("room-name-form");
 const roomNameInput = document.getElementById("room-name-input");
 const container = document.getElementById("video-container");
