@@ -25,13 +25,16 @@ const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: 4910 });
 
-const wsConnections = new Map();
-let i = 0
+let globalCount = 0;
+
 wss.on("connection", (ws) => {
   console.log("New client");
 
+  ws.count = 0;
   setInterval(() => {
-    ws.send(`testing ${i++}`)
+    ws.send(
+      JSON.stringify({ wsCount: ws.count++, globalCount: globalCount++ })
+    );
   }, 3000);
 
   ws.on("message", (data) => {
