@@ -26,36 +26,26 @@ const WebSocket = require("ws");
 const wss = new WebSocket.Server({ port: 4910 });
 
 let globalCount = 0;
+let setInt;
 
 wss.on("connection", (ws) => {
   console.log("New client");
 
   ws.count = 0;
-  setInterval(() => {
+  setInt = setInterval(() => {
     ws.send(
       JSON.stringify({ wsCount: ws.count++, globalCount: globalCount++ })
     );
-  }, 3000);
+  }, 2000);
 
-  ws.on("message", (data) => {
-    const message = data.toString();
-    console.log(message);
+  ws.onmessage = (event) => {
+    console.log(event.data);
+  };
 
-    // if (message.includes("identt")) {
-    //   ws.identt = message.replace("identt", "");
-    // } else {
-    //   wss.clients.forEach((client) => client.send(data));
-    //   // console.log(`wsSend.readyState: ${wsSend.readyState}`);
-    //   // ws.send(data);
-    // }
-    // wss.clients.forEach((client) =>
-    //   console.log(`client.identt: ${client.identt}`)
-    // );
-  });
-
-  ws.on("close", () => {
+  ws.onclose = (event) => {
     console.log("Client disconnected");
-  });
+    clearInterval(setInt);
+  };
 });
 
 /**
