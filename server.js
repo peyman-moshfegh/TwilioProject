@@ -34,7 +34,11 @@ wss.on("connection", (ws) => {
   ws.count = 0;
   setInt = setInterval(() => {
     ws.send(
-      JSON.stringify({ wsCount: ws.count++, globalCount: globalCount++ })
+      JSON.stringify({
+        wsCount: ws.count++,
+        globalCount: globalCount++,
+        commandID: "A002",
+      })
     );
   }, 2000);
 
