@@ -33,7 +33,7 @@ const findOrCreateRoom = async (roomName) => {
     if (error.code == 20404) {
       const room = await twilioClient.video.rooms.create({
         uniqueName: roomName,
-        type: "group",
+        type: "go",
       });
       console.log("newly created room:");
       console.log(room);
