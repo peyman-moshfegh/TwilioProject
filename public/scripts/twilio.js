@@ -2,6 +2,8 @@ const form = document.getElementById("room-name-form");
 const roomNameInput = document.getElementById("room-name-input");
 const container = document.getElementById("video-container");
 
+let room;
+
 const startRoom = async (event) => {
   // prevent a page reload when a user submits the form
   event.preventDefault();
@@ -21,8 +23,9 @@ const startRoom = async (event) => {
   });
   const { token } = await response.json();
 
-  // join the video room with the token
-  const room = await joinVideoRoom(roomName, token);
+  room = await Twilio.Video.connect(token, {
+    room: roomName,
+  });
 
   // render the local and remote participants' video and audio tracks
   handleConnectedParticipant(room.localParticipant);
